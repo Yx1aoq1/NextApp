@@ -3,7 +3,7 @@ import { Link } from '@/i18n/navigation';
 export const HomePage = () => {
   return (
     <div>
-      <h1>测试链接</h1>
+      <h1>测试链接(测试自动构建流程)</h1>
       <ul>
         <Link href="/video">
           <li>/video</li>
