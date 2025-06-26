@@ -28,16 +28,18 @@ export const PlayerPage = () => {
 
   return (
     <div className="w-screen h-screen">
-      <LoadingWrapper loading={loading} tip="加载中...">
-        <video
-          className="w-full h-full"
-          ref={videoRef}
-          src="/home-video.mp4"
-          onLoadedMetadata={() => setLoading(false)}
-          onPause={() => setPaused(true)}
-          onPlay={() => setPaused(false)}
-        />
-      </LoadingWrapper>
+      <div>
+        <LoadingWrapper loading={loading} tip="加载中...">
+          <video
+            className="w-full h-full"
+            ref={videoRef}
+            src="/test-video.mp4"
+            onLoadedMetadata={() => setLoading(false)}
+            onPause={() => setPaused(true)}
+            onPlay={() => setPaused(false)}
+          />
+        </LoadingWrapper>
+      </div>
     </div>
   );
 };
