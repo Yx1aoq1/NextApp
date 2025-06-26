@@ -42,7 +42,7 @@ const VideoContainer = (props: Props) => {
   const play = async () => {
     const video = videoRef?.current;
     try {
-      video?.play().catch(() => void 0);
+      await video?.play().catch(() => void 0);
       setIsPlaying(true);
       setIsPlayEnd(false);
     } catch (error) {
