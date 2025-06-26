@@ -1,0 +1,7 @@
+dist
+temp
+public
+docs
+cache
+sentry.*
+.next
