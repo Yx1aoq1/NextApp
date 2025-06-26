@@ -76,6 +76,13 @@ export const HomePage = () => {
                 视频测试
               </div>
             </Link>
+            <Link href="/player">
+              <div
+                className={`p-4 rounded-lg shadow-md text-center transition-colors duration-300 ${theme === 'dark' ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+              >
+                播放测试
+              </div>
+            </Link>
           </li>
           {/* 更多链接可以根据需要添加 */}
         </ul>
