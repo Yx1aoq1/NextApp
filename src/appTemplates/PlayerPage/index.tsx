@@ -7,12 +7,14 @@ export const PlayerPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [loading, setLoading] = useState(true);
   const [paused, setPaused] = useState(true);
-  const [taskFile, setTaskFile] = useState({
-    width: 0,
-    height: 0,
-  });
 
-  const { viewportRef, boxRect } = useViewportScale(taskFile, false);
+  const { viewportRef, boxRect } = useViewportScale(
+    {
+      width: 960,
+      height: 540,
+    },
+    false,
+  );
 
   useEffect(() => {
     // 按下空格触发播放暂停
@@ -30,12 +32,6 @@ export const PlayerPage = () => {
     if (videoRef.current) {
       videoRef.current.load();
     }
-    setTimeout(() => {
-      setTaskFile({
-        width: 960,
-        height: 540,
-      });
-    }, 1000);
   }, []);
 
   return (
