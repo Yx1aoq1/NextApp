@@ -58,7 +58,7 @@ export const PlayerPage = () => {
         >
           <LoadingWrapper loading={loading} tip="加载中...">
             <video
-              className="w-full h-full"
+              className="w-full h-full border-[3px] border-solid border-red-500"
               ref={videoRef}
               src="/test-video.mp4"
               onLoadedMetadata={() => setLoading(false)}
