@@ -10,13 +10,16 @@
   },
   "dependencies": {
     "@use-gesture/react": "^10.3.1",
+    "clsx": "^2.1.1",
     "lodash": "^4.17.21",
     "next": "15.3.4",
     "next-intl": "^4.3.1",
+    "ogv": "^1.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-use": "^17.6.0",
-    "resize-observer-polyfill": "^1.5.1"
+    "resize-observer-polyfill": "^1.5.1",
+    "sass": "^1.89.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
