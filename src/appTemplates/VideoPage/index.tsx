@@ -10,7 +10,7 @@ export const VideoPage = () => {
       <h1>ogv/webm</h1>
       <OgvPlayer className="w-200" src="/test-video.webm" autoPlay />
       <h1>jsmpeg/ts</h1>
-      <JSmpegPlayer className="w-200" src="/test-video.ts" autoPlay loop />
+      <JSmpegPlayer className="w-200" src="/test-video.tsv" autoPlay loop />
     </div>
   );
 };
