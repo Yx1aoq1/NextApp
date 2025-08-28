@@ -22,6 +22,8 @@ declare const OGV: {
   enableVP9: boolean;
 };
 
-declare class JSMpeg {
-  static Player: any;
+interface Window {
+  JSMpeg?: {
+    Player: new (url: string, options?: any) => any;
+  };
 }

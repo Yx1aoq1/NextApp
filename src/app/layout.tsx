@@ -16,9 +16,8 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <Script src="/lib/ogvjs-1.9.0/ogv.js" strategy="beforeInteractive" />
       </body>
-      <Script src="/lib/ogvjs-1.9.0/ogv.js" strategy="beforeInteractive" />
-      <Script src="/lib/jsmpeg/jsmpeg.min.js" strategy="beforeInteractive" />
     </html>
   );
 }
