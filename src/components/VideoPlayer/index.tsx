@@ -1,81 +1,81 @@
-'use client';
+'use client'
 
-import type { Ref } from 'react';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import type { Ref } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
-import cn from 'clsx';
-import Image from 'next/image';
+import cn from 'clsx'
+import Image from 'next/image'
 
-import useDocumentVisibilityChange from '@/hooks/useDocumentVisibilityChange';
-import { useInViewport } from '@/hooks/useInViewport';
+import useDocumentVisibilityChange from '@/hooks/useDocumentVisibilityChange'
+import { useInViewport } from '@/hooks/useInViewport'
 
-import styles from './index.module.scss';
+import styles from './index.module.scss'
 
-import type { StaticImageData } from 'next/image';
+import type { StaticImageData } from 'next/image'
 
 interface Props {
   /** 视频地址 */
-  src: string;
+  src: string
 
   /** 视频封面图 */
-  poster?: StaticImageData | string;
+  poster?: StaticImageData | string
 
   /** 封面图 blur 样式  */
-  posterBlur?: boolean;
+  posterBlur?: boolean
 
   /** 是否静音 */
-  muted?: boolean;
+  muted?: boolean
 
   /** 是否自动播放 */
-  autoPlay?: boolean;
+  autoPlay?: boolean
 
   /** 显示控制栏 */
-  controls?: boolean;
+  controls?: boolean
 
   /** class */
-  className?: string;
+  className?: string
 
   /** 滑动到视口内时重头播放 */
-  replay?: boolean;
+  replay?: boolean
 
   /** 是否循环播放 */
-  loop?: boolean;
+  loop?: boolean
 
   /** 封面图是否优先加载 */
-  priority?: boolean;
+  priority?: boolean
 
   /** 将视频url转为blob防止劫持 */
-  useBlob?: boolean;
+  useBlob?: boolean
 
   /** 播放结束后触发 */
-  onEnded?: () => void;
+  onEnded?: () => void
 }
 
 export interface VideoPlayerRef {
   /** 播放 */
-  play: () => void;
+  play: () => void
 
   /** 暂停 */
-  stop: () => void;
+  stop: () => void
 }
 
 /** 对于某些国内浏览器转为blob播放有助于防劫持 */
 const videoToBlob = (src: string) => {
   return new Promise<string>(resolve => {
-    const xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest()
 
-    xhr.open('GET', src, true);
+    xhr.open('GET', src, true)
 
-    xhr.responseType = 'blob';
+    xhr.responseType = 'blob'
 
     xhr.onload = (e: any) => {
       if (e.target.status == 200) {
-        resolve(URL.createObjectURL(e.target.response));
+        resolve(URL.createObjectURL(e.target.response))
       }
-    };
-    xhr.send();
-  });
-};
+    }
+    xhr.send()
+  })
+}
 
 const VideoPlayer = forwardRef<VideoPlayerRef, Props>((props, ref) => {
   const {
@@ -87,156 +87,158 @@ const VideoPlayer = forwardRef<VideoPlayerRef, Props>((props, ref) => {
     replay = true,
     priority = false,
     useBlob = false,
-  } = props;
-  const videoRef: Ref<HTMLVideoElement> = useRef(null);
-  const containerRef: Ref<HTMLDivElement> = useRef(null);
+  } = props
+  const videoRef: Ref<HTMLVideoElement> = useRef(null)
+  const containerRef: Ref<HTMLDivElement> = useRef(null)
   const poster =
-    !props.poster || typeof props.poster === 'string' ? props.poster : (props.poster as StaticImageData).src;
-  const src = typeof props.src === 'string' ? props.src : (props.src as any).src;
+    !props.poster || typeof props.poster === 'string'
+      ? props.poster
+      : (props.poster as StaticImageData).src
+  const src = typeof props.src === 'string' ? props.src : (props.src as any).src
 
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
-  const [supportBlob, setSupportBlob] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isPlayEnd, setIsPlayEnd] = useState(false);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null)
+  const [supportBlob, setSupportBlob] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isPlayEnd, setIsPlayEnd] = useState(false)
   const inViewport = useInViewport(videoRef as React.RefObject<HTMLElement>, {
     root: null,
     rootMargin: '0px',
     threshold: 0,
-  });
+  })
 
-  const isPosterVisible = poster && !isPlaying && !isPlayEnd;
-  const videoSrc = useBlob && supportBlob ? blobUrl : src;
-  const timer = useRef<NodeJS.Timeout | null>(null);
+  const isPosterVisible = poster && !isPlaying && !isPlayEnd
+  const videoSrc = useBlob && supportBlob ? blobUrl : src
+  const timer = useRef<NodeJS.Timeout | null>(null)
 
   const clearTimer = () => {
     if (timer.current) {
-      clearTimeout(timer.current);
-      timer.current = null;
+      clearTimeout(timer.current)
+      timer.current = null
     }
-  };
+  }
 
   const play = useCallback(() => {
-    const video = videoRef?.current;
-    clearTimer();
+    const video = videoRef?.current
+    clearTimer()
     try {
       video
         ?.play()
         .then(() => {
-          const lastTime = video.currentTime;
+          const lastTime = video.currentTime
           // safari有时候执行了但是没有在播，所以重新检测下播放进度是否有更新
           timer.current = setTimeout(() => {
             if (video.currentTime !== lastTime) {
-              setIsPlaying(true);
-              setIsPlayEnd(false);
+              setIsPlaying(true)
+              setIsPlayEnd(false)
             } else {
-              play();
+              play()
             }
-          }, 500);
+          }, 500)
         })
         .catch(e => {
-          console.log(e);
-        });
+          console.log(e)
+        })
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  }, [videoRef]);
+  }, [videoRef])
 
   const pause = useCallback(() => {
-    const video = videoRef?.current;
+    const video = videoRef?.current
     try {
-      video?.pause();
-      setIsPlaying(false);
+      video?.pause()
+      setIsPlaying(false)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  }, [videoRef]);
+  }, [videoRef])
 
   const stop = useCallback(() => {
-    const video = videoRef?.current;
-    if (!video) return;
-    pause();
-    video.currentTime = 0;
-  }, [videoRef, pause]);
+    const video = videoRef?.current
+    if (!video) return
+    pause()
+    video.currentTime = 0
+  }, [videoRef, pause])
 
   const onPlay = () => {
-    setIsPlaying(true);
-  };
+    setIsPlaying(true)
+  }
 
   const onPause = () => {
-    setIsPlaying(false);
-  };
+    setIsPlaying(false)
+  }
 
   const onEnded = () => {
-    setIsPlayEnd(true);
-  };
+    setIsPlayEnd(true)
+  }
 
   useEffect(() => {
-    if (!replay || !autoPlay) return;
+    if (!replay || !autoPlay) return
 
     if (inViewport && !isPlaying) {
-      play();
+      play()
     }
     if (!inViewport && isPlaying) {
-      stop();
+      stop()
     }
-  }, [inViewport, isPlaying, replay, autoPlay, play, stop]);
+  }, [inViewport, isPlaying, replay, autoPlay, play, stop])
 
   useImperativeHandle(ref, () => ({
     play,
     stop,
-  }));
+  }))
   // 将url转为blob播放，防止劫持
   useEffect(() => {
-    const video = videoRef.current;
+    const video = videoRef.current
 
-    if (!video) return;
+    if (!video) return
     const initBlobUrl = async (src: string) => {
-      const blobUrl = await videoToBlob(src);
-      setBlobUrl(blobUrl);
-    };
+      const blobUrl = await videoToBlob(src)
+      setBlobUrl(blobUrl)
+    }
 
     const handleNotSupportBlob = () => {
       if (blobUrl) {
-        setSupportBlob(false);
+        setSupportBlob(false)
       }
-    };
+    }
 
     if (useBlob && src && !blobUrl) {
-      initBlobUrl(src);
+      initBlobUrl(src)
     }
     // 防止浏览器不支持blob播放，可以回退成src播放
-    video?.addEventListener('error', handleNotSupportBlob);
+    video?.addEventListener('error', handleNotSupportBlob)
 
     return () => {
-      video?.removeEventListener('error', handleNotSupportBlob);
-    };
-  }, [useBlob, src, blobUrl]);
+      video?.removeEventListener('error', handleNotSupportBlob)
+    }
+  }, [useBlob, src, blobUrl])
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const video = videoRef.current
+    if (!video) return
 
     // 在ios 13中频繁切换发现会导致崩溃，所以在切换前需要清除上一个视频
-    video.pause();
-    video.removeAttribute('src');
-    video.removeAttribute('poster');
-    video.load();
-    setIsPlaying(false);
+    video.pause()
+    video.removeAttribute('src')
+    video.removeAttribute('poster')
+    video.load()
+    setIsPlaying(false)
 
     if (videoSrc) {
-      video.src = videoSrc;
-      video.poster = poster || '';
+      video.src = videoSrc
+      video.poster = poster || ''
     }
     if (autoPlay) {
-      play();
+      play()
     }
-  }, [videoSrc, poster, autoPlay, play]);
+  }, [videoSrc, poster, autoPlay, play])
 
   useDocumentVisibilityChange((isVisible: boolean) => {
     if (isVisible) {
-      play();
+      play()
     }
-  });
+  })
 
   return (
     <div className={cn([styles['video-container'], props.className])} ref={containerRef}>
@@ -265,7 +267,11 @@ const VideoPlayer = forwardRef<VideoPlayerRef, Props>((props, ref) => {
         onPaste={onPause}
       />
       {isPosterVisible && (
-        <div className={cn(styles['video-poster-outer'], { [styles['video-poster-blur']]: posterBlur })}>
+        <div
+          className={cn(styles['video-poster-outer'], {
+            [styles['video-poster-blur']]: posterBlur,
+          })}
+        >
           {poster && (
             <Image
               src={poster}
@@ -281,7 +287,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, Props>((props, ref) => {
         </div>
       )}
     </div>
-  );
-});
+  )
+})
 
-export default VideoPlayer;
+export default VideoPlayer

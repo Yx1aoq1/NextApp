@@ -9,4 +9,4 @@ export const SCALE_CONFIG = {
   defaultScale: 1,
   /** 吸附距离，靠近起始位置附近 n 就吸附 */
   adsorbDistance: 0.15,
-};
+}

@@ -1,5 +1,5 @@
-import { HomePage } from '@/appTemplates/HomePage';
+import { HomePage } from '@/appTemplates/HomePage'
 
 export default function Home() {
-  return <HomePage />;
+  return <HomePage />
 }

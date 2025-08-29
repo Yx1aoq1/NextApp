@@ -1,26 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-const useDocumentVisibilityChange = (onVisibilityChange?: (isVisible: boolean) => void): boolean => {
-  const [isVisible, setIsVisible] = useState(true);
+const useDocumentVisibilityChange = (
+  onVisibilityChange?: (isVisible: boolean) => void
+): boolean => {
+  const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      const isDocumentVisible = document.visibilityState === 'visible';
-      setIsVisible(isDocumentVisible);
+      const isDocumentVisible = document.visibilityState === 'visible'
+      setIsVisible(isDocumentVisible)
 
       if (onVisibilityChange) {
-        onVisibilityChange(isDocumentVisible);
+        onVisibilityChange(isDocumentVisible)
       }
-    };
+    }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [onVisibilityChange]);
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [onVisibilityChange])
 
-  return isVisible;
-};
+  return isVisible
+}
 
-export default useDocumentVisibilityChange;
+export default useDocumentVisibilityChange

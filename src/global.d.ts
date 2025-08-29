@@ -1,29 +1,29 @@
 declare class OGVPlayer extends HTMLElement {
-  src: string;
-  autoplay: boolean;
-  preload: string;
-  volume: number;
-  paused: boolean;
-  videoWidth: number;
-  videoHeight: number;
-  play(): void;
-  pause(): void;
-  stop(): void;
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject): void;
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject): void;
+  src: string
+  autoplay: boolean
+  preload: string
+  volume: number
+  paused: boolean
+  videoWidth: number
+  videoHeight: number
+  play(): void
+  pause(): void
+  stop(): void
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject): void
+  removeEventListener(type: string, listener: EventListenerOrEventListenerObject): void
 }
 
 declare const OGVLoader: {
-  base: string;
-};
+  base: string
+}
 
 declare const OGV: {
-  enableWebM: boolean;
-  enableVP9: boolean;
-};
+  enableWebM: boolean
+  enableVP9: boolean
+}
 
 interface Window {
   JSMpeg?: {
-    Player: new (url: string, options?: any) => any;
-  };
+    Player: new (url: string, options?: any) => any
+  }
 }

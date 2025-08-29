@@ -1,44 +1,46 @@
-'use client';
-import { useEffect, useRef, useState } from 'react';
-import { LoadingWrapper } from './LoadingWrapper';
-import { useViewportScale } from '@/hooks/useViewportScale';
+'use client'
+import { useEffect, useRef, useState } from 'react'
+
+import { useViewportScale } from '@/hooks/useViewportScale'
+
+import { LoadingWrapper } from './LoadingWrapper'
 
 export const PlayerPage = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [loading, setLoading] = useState(true);
-  const [paused, setPaused] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [loading, setLoading] = useState(true)
+  const [paused, setPaused] = useState(true)
 
   const { viewportRef, boxRect } = useViewportScale(
     {
       width: 960,
       height: 540,
     },
-    false,
-  );
+    false
+  )
 
   useEffect(() => {
     // 按下空格触发播放暂停
     const onKeydown = (event: KeyboardEvent) => {
       if (event.key === ' ' && videoRef.current) {
-        console.log('keydown', paused);
-        videoRef.current[paused ? 'play' : 'pause']?.();
+        console.log('keydown', paused)
+        videoRef.current[paused ? 'play' : 'pause']?.()
       }
-    };
-    document.body.addEventListener('keydown', onKeydown);
-    return () => document.body.removeEventListener('keydown', onKeydown);
-  }, [paused]);
+    }
+    document.body.addEventListener('keydown', onKeydown)
+    return () => document.body.removeEventListener('keydown', onKeydown)
+  }, [paused])
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.load();
+      videoRef.current.load()
     }
-  }, []);
+  }, [])
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center overflow-hidden">
-      <div ref={viewportRef} className="relative flex-1 h-full overflow-hidden">
+    <div className="flex h-screen w-screen items-center justify-center overflow-hidden">
+      <div ref={viewportRef} className="relative h-full flex-1 overflow-hidden">
         <div
-          className="transform origin-top-left"
+          className="origin-top-left transform"
           style={
             loading
               ? {
@@ -54,7 +56,7 @@ export const PlayerPage = () => {
         >
           <LoadingWrapper loading={loading} tip="加载中...">
             <video
-              className="w-full h-full border-[3px] border-solid border-red-500"
+              className="h-full w-full border-[3px] border-solid border-red-500"
               ref={videoRef}
               src="/test-video.mp4"
               onLoadedMetadata={() => setLoading(false)}
@@ -65,5 +67,5 @@ export const PlayerPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

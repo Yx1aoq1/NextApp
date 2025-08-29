@@ -1,31 +1,34 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
+
+import Link from 'next/link'
 
 export const HomePage = () => {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('light')
   const isDarkPreferred =
-    typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    typeof window !== 'undefined' &&
+    window.matchMedia &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches
 
   // Initialize theme based on system preference
   useEffect(() => {
-    setTheme(isDarkPreferred ? 'dark' : 'light');
-  }, [isDarkPreferred]);
+    setTheme(isDarkPreferred ? 'dark' : 'light')
+  }, [isDarkPreferred])
 
   // Toggle theme manually
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
 
   return (
     <div
-      className={`min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-black text-white' : 'bg-white text-gray-900'}`}
+      className={`flex min-h-screen flex-col items-center justify-center p-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-black text-white' : 'bg-white text-gray-900'}`}
     >
       <div className="absolute top-4 right-4">
         <button
           onClick={toggleTheme}
-          className={`p-2 rounded-md ${theme === 'dark' ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-200 hover:bg-gray-300'}`}
+          className={`rounded-md p-2 ${theme === 'dark' ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-200 hover:bg-gray-300'}`}
         >
           {theme === 'dark' ? (
             <svg
@@ -61,9 +64,11 @@ export const HomePage = () => {
         </button>
       </div>
 
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-4">Welcome!</h1>
-        <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>选择Demo:</p>
+      <div className="mb-8 text-center">
+        <h1 className="mb-4 text-4xl font-bold">Welcome!</h1>
+        <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+          选择Demo:
+        </p>
       </div>
 
       <nav className="w-full max-w-md">
@@ -71,14 +76,14 @@ export const HomePage = () => {
           <li>
             <Link href="/video">
               <div
-                className={`p-4 rounded-lg shadow-md text-center transition-colors duration-300 ${theme === 'dark' ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                className={`rounded-lg p-4 text-center shadow-md transition-colors duration-300 ${theme === 'dark' ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
               >
                 视频测试
               </div>
             </Link>
             <Link href="/player">
               <div
-                className={`p-4 rounded-lg shadow-md text-center transition-colors duration-300 ${theme === 'dark' ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                className={`rounded-lg p-4 text-center shadow-md transition-colors duration-300 ${theme === 'dark' ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
               >
                 播放测试
               </div>
@@ -88,5 +93,5 @@ export const HomePage = () => {
         </ul>
       </nav>
     </div>
-  );
-};
+  )
+}

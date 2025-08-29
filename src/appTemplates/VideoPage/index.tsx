@@ -1,7 +1,6 @@
-import JSmpegPlayer from '@/components/JSmpegPlayer';
-import OgvPlayer from '@/components/OgvPlayer';
-import VideoPlayer from '@/components/VideoPlayer';
-import VideoJsPlayer from '@/components/VideoPlayer/videojs';
+import JSmpegPlayer from '@/components/JSmpegPlayer'
+import OgvPlayer from '@/components/OgvPlayer'
+import VideoPlayer from '@/components/VideoPlayer'
 
 export const VideoPage = () => {
   return (
@@ -17,5 +16,5 @@ export const VideoPage = () => {
       <h1>ogv/webm</h1>
       <OgvPlayer className="w-200" src="/test-video.webm" autoPlay />
     </div>
-  );
-};
+  )
+}
