@@ -4,6 +4,7 @@ import { MultiBufferStream } from 'mp4box'
 interface Mp4PlayerOptions {
   canvas: HTMLCanvasElement
   src: string
+  loop?: boolean
   onPlay?: () => void
   onPause?: () => void
   onEnded?: () => void
@@ -21,6 +22,7 @@ export class Mp4Player {
   private ctx: CanvasRenderingContext2D
   private mp4box: MP4Box.ISOFile
   private src: string
+  private loop: boolean = false
 
   private videoInfo: MP4Box.Movie | null = null
   private videoTrack: MP4Box.Track | null = null
@@ -45,6 +47,7 @@ export class Mp4Player {
     this.canvas = options.canvas
     this.ctx = this.canvas.getContext('2d')!
     this.src = options.src
+    this.loop = options.loop ?? false
     this.mp4box = MP4Box.createFile()
 
     this.onPlayCallback = options.onPlay
@@ -205,12 +208,25 @@ export class Mp4Player {
 
       // 如果最后一帧的时间戳接近视频总时长，说明播放结束
       if (lastFrameTime >= videoDuration * 0.95) {
-        this.wantsToPlay = false
-        this.isPlaying = false
-        this.paused = true
-        this.onEndedCallback?.()
-        cancelAnimationFrame(this.animationId)
-        return
+        if (this.loop) {
+          // 循环播放：重置到开头
+          this.currentFrameIndex = 0
+          this.currentTime = 0
+          this.startTime = now
+          this.isPlaying = true
+          // 渲染第一帧
+          if (this.videoFrames[0]) {
+            this.ctx.drawImage(this.videoFrames[0].img, 0, 0, this.canvas.width, this.canvas.height)
+          }
+        } else {
+          // 正常结束播放
+          this.wantsToPlay = false
+          this.isPlaying = false
+          this.paused = true
+          this.onEndedCallback?.()
+          cancelAnimationFrame(this.animationId)
+          return
+        }
       }
     }
 

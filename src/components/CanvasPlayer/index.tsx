@@ -92,6 +92,7 @@ const CanvasPlayer = forwardRef<CanvasPlayerRef, Props>((props, ref) => {
     playerRef.current = new Mp4Player({
       canvas: canvasRef.current,
       src,
+      loop,
       onPlay: () => {
         setIsPlaying(true)
         setIsPlayEnd(false)
@@ -106,7 +107,7 @@ const CanvasPlayer = forwardRef<CanvasPlayerRef, Props>((props, ref) => {
     if (autoPlay) {
       playerRef.current.play()
     }
-  }, [src, autoPlay])
+  }, [src, autoPlay, loop])
 
   useDocumentVisibilityChange((isVisible: boolean) => {
     if (isVisible && inViewport) {
