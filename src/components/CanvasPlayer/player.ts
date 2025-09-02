@@ -4,6 +4,7 @@ import { MultiBufferStream } from 'mp4box'
 interface Mp4PlayerOptions {
   canvas: HTMLCanvasElement
   src: string
+  autoplay?: boolean
   loop?: boolean
   onPlay?: () => void
   onPause?: () => void
@@ -23,6 +24,7 @@ export class Mp4Player {
   private mp4box: MP4Box.ISOFile
   private src: string
   private loop: boolean = false
+  private autoplay: boolean = false
 
   private videoTrack: MP4Box.Track | null = null
   private videoDecoder: VideoDecoder | null = null
@@ -30,6 +32,7 @@ export class Mp4Player {
   private paused: boolean = true
   private isPlaying: boolean = false
   private animationId: number | null = null
+  private seekTimer: NodeJS.Timeout | null = null
 
   private videoFrames: Frame[] = []
   private currentFrameIndex: number = 0
@@ -45,6 +48,7 @@ export class Mp4Player {
     this.canvas = options.canvas
     this.ctx = this.canvas.getContext('2d')!
     this.src = options.src
+    this.autoplay = options.autoplay ?? false
     this.loop = options.loop ?? false
     this.mp4box = MP4Box.createFile()
 
@@ -108,6 +112,10 @@ export class Mp4Player {
       })
 
       this.mp4box.start()
+
+      if (this.autoplay) {
+        this.play()
+      }
     }
 
     this.mp4box.onSamples = (trackId, ref, samples) => {
@@ -282,6 +290,10 @@ export class Mp4Player {
   seek(time: number) {
     if (!this.videoTrack) return
 
+    if (this.seekTimer) {
+      clearTimeout(this.seekTimer)
+    }
+
     // 限制时间范围
     const duration = this.getDuration()
     this.currentTime = Math.max(0, Math.min(time, duration))
@@ -296,7 +308,7 @@ export class Mp4Player {
       this.currentFrameIndex = targetIndex
     } else {
       // 可能帧还未解析出来，所以延迟100ms再试一次
-      setTimeout(() => {
+      this.seekTimer = setTimeout(() => {
         this.seek(time)
       }, 100)
     }
