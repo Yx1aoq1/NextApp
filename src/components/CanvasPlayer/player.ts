@@ -29,7 +29,6 @@ export class Mp4Player {
   private videoDecoder: VideoDecoder | null = null
 
   private paused: boolean = true
-  private wantsToPlay: boolean = false
   private isPlaying: boolean = false
   private animationId: number | null = null
 
@@ -157,7 +156,7 @@ export class Mp4Player {
   private update = (now: DOMHighResTimeStamp) => {
     this.animationId = requestAnimationFrame(this.update)
 
-    // 如果没有帧数据或不想播放，直接返回
+    // 如果没有帧数据，直接返回
     if (this.videoFrames.length === 0 || !this.videoTrack) return
 
     // 初始化播放开始时间
@@ -191,7 +190,7 @@ export class Mp4Player {
     if (targetFrame && targetIndex >= this.currentFrameIndex) {
       this.ctx.drawImage(targetFrame.img, 0, 0, this.canvas.width, this.canvas.height)
       this.currentFrameIndex = targetIndex
-      this.currentTime = targetFrame.timestamp / (this.videoTrack.timescale * 1000)
+      this.currentTime = targetFrame.timestamp / this.videoTrack.timescale
 
       // 调用进度回调
       if (this.onProgressCallback) {
@@ -220,7 +219,6 @@ export class Mp4Player {
           }
         } else {
           // 正常结束播放
-          this.wantsToPlay = false
           this.isPlaying = false
           this.paused = true
           this.onEndedCallback?.()
@@ -244,16 +242,61 @@ export class Mp4Player {
     if (this.animationId) return
 
     this.animationId = requestAnimationFrame(this.update)
-    this.wantsToPlay = true
     this.paused = false
   }
 
-  pause() {}
+  pause() {
+    if (this.paused || !this.animationId) {
+      return
+    }
 
-  stop() {}
+    cancelAnimationFrame(this.animationId)
+    this.animationId = null
+    this.isPlaying = false
+    this.paused = true
+    this.onPauseCallback?.()
+  }
+
+  stop() {
+    this.pause()
+    this.seek(0)
+  }
 
   // 跳转到指定时间
-  seek(time: number) {}
+  seek(time: number) {
+    if (!this.videoTrack) return
+
+    // 限制时间范围
+    const duration = this.getDuration()
+    this.currentTime = Math.max(0, Math.min(time, duration))
+
+    // 转换为视频时间戳
+    const targetTimestamp = this.currentTime * this.videoTrack.timescale
+
+    // 查找当前应该显示的帧
+    let targetFrame: Frame | null = null
+    let targetIndex = 0
+    for (let i = 0; i < this.videoFrames.length; i++) {
+      const frame = this.videoFrames[i]
+      if (frame.timestamp <= targetTimestamp) {
+        targetFrame = frame
+        targetIndex = i
+      } else {
+        break
+      }
+    }
+
+    this.currentFrameIndex = targetIndex
+
+    // 如果正在播放，调整开始时间以保持同步
+    if (this.isPlaying) {
+      this.startTime = performance.now() - this.currentTime * 1000
+    }
+
+    if (targetFrame) {
+      this.ctx.drawImage(targetFrame.img, 0, 0, this.canvas.width, this.canvas.height)
+    }
+  }
 
   // 获取视频总时长（秒）
   getDuration(): number {
