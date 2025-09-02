@@ -153,6 +153,35 @@ export class Mp4Player {
     }
   }
 
+  private findFrame(timestamp: number, startIndex = 0) {
+    // 查找当前应该显示的帧
+    let targetFrame: Frame | null = null
+    let targetIndex = startIndex
+
+    // 从当前帧开始向前查找
+    for (let i = startIndex; i < this.videoFrames.length; i++) {
+      const frame = this.videoFrames[i]
+      if (frame.timestamp <= timestamp) {
+        targetFrame = frame
+        targetIndex = i
+      } else {
+        break
+      }
+    }
+
+    if (targetFrame && targetIndex >= startIndex) {
+      return {
+        frame: targetFrame,
+        index: targetIndex,
+      }
+    }
+
+    return {
+      frame: null,
+      index: -1,
+    }
+  }
+
   private update = (now: DOMHighResTimeStamp) => {
     this.animationId = requestAnimationFrame(this.update)
 
@@ -170,21 +199,11 @@ export class Mp4Player {
     const elapsedTime = now - this.startTime
     // 使用视频轨道的timescale来正确转换时间
     const currentTimestamp = (elapsedTime / 1000) * this.videoTrack.timescale
-
     // 查找当前应该显示的帧
-    let targetFrame: Frame | null = null
-    let targetIndex = this.currentFrameIndex
-
-    // 从当前帧开始向前查找
-    for (let i = this.currentFrameIndex; i < this.videoFrames.length; i++) {
-      const frame = this.videoFrames[i]
-      if (frame.timestamp <= currentTimestamp) {
-        targetFrame = frame
-        targetIndex = i
-      } else {
-        break
-      }
-    }
+    const { frame: targetFrame, index: targetIndex } = this.findFrame(
+      currentTimestamp,
+      this.currentFrameIndex
+    )
 
     // 如果找到了新的帧，渲染它
     if (targetFrame && targetIndex >= this.currentFrameIndex) {
@@ -272,29 +291,21 @@ export class Mp4Player {
 
     // 转换为视频时间戳
     const targetTimestamp = this.currentTime * this.videoTrack.timescale
-
     // 查找当前应该显示的帧
-    let targetFrame: Frame | null = null
-    let targetIndex = 0
-    for (let i = 0; i < this.videoFrames.length; i++) {
-      const frame = this.videoFrames[i]
-      if (frame.timestamp <= targetTimestamp) {
-        targetFrame = frame
-        targetIndex = i
-      } else {
-        break
-      }
+    const { frame: targetFrame, index: targetIndex } = this.findFrame(targetTimestamp)
+    // 存在帧数据时，渲染帧
+    if (targetFrame) {
+      this.ctx.drawImage(targetFrame.img, 0, 0, this.canvas.width, this.canvas.height)
+      this.currentFrameIndex = targetIndex
+    } else {
+      // 可能帧还未解析出来，所以延迟100ms再试一次
+      setTimeout(() => {
+        this.seek(time)
+      }, 100)
     }
-
-    this.currentFrameIndex = targetIndex
-
     // 如果正在播放，调整开始时间以保持同步
     if (this.isPlaying) {
       this.startTime = performance.now() - this.currentTime * 1000
-    }
-
-    if (targetFrame) {
-      this.ctx.drawImage(targetFrame.img, 0, 0, this.canvas.width, this.canvas.height)
     }
   }
 
