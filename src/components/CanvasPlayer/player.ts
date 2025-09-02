@@ -164,9 +164,10 @@ export class Mp4Player {
       this.onPlayCallback?.()
     }
 
-    // 计算当前应该播放的时间（微秒）
+    // 计算当前应该播放的时间
     const elapsedTime = now - this.startTime
-    const currentTimestamp = elapsedTime * 30
+    // 使用视频轨道的timescale来正确转换时间
+    const currentTimestamp = (elapsedTime / 1000) * this.videoTrack.timescale
 
     // 查找当前应该显示的帧
     let targetFrame: Frame | null = null
