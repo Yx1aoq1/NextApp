@@ -13,6 +13,7 @@
     "clsx": "^2.1.1",
     "intersection-observer": "^0.12.2",
     "lodash": "^4.17.21",
+    "mp4box": "^2.1.0",
     "next": "15.3.4",
     "next-intl": "^4.3.1",
     "ogv": "^1.9.0",

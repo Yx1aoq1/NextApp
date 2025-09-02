@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import CanvasPlayer from '@/components/CanvasPlayer'
 import JSmpegPlayer from '@/components/JSmpegPlayer'
 import OgvPlayer from '@/components/OgvPlayer'
 import VideoPlayer from '@/components/VideoPlayer'
@@ -40,6 +41,10 @@ export const VideoPage = () => {
           className="absolute inset-y-0 z-3 h-full w-0.5 bg-red-500"
           style={{ left: 'var(--percent, 0)' }}
         ></div>
+      </div>
+      <h1>mp4box.js+canvas</h1>
+      <div className="w-200">
+        <CanvasPlayer src="/test-video.mp4" autoPlay />
       </div>
       <h1>ogv/webm</h1>
       <OgvPlayer className="w-200" src="/test-video.webm" autoPlay />
