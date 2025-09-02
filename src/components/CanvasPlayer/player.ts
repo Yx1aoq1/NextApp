@@ -24,7 +24,6 @@ export class Mp4Player {
   private src: string
   private loop: boolean = false
 
-  private videoInfo: MP4Box.Movie | null = null
   private videoTrack: MP4Box.Track | null = null
   private videoDecoder: VideoDecoder | null = null
 
@@ -73,7 +72,6 @@ export class Mp4Player {
     }
 
     this.mp4box.onReady = info => {
-      this.videoInfo = info
       // 获取视频轨道信息
       this.videoTrack = info.videoTracks[0]
       if (this.videoTrack) {
@@ -140,7 +138,6 @@ export class Mp4Player {
         const { done, value } = await reader.read()
         if (done) {
           this.mp4box.flush()
-          console.log('Video download complete.')
           break
         }
         const buffer = value.buffer as MP4Box.MP4BoxBuffer
