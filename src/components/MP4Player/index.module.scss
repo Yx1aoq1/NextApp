@@ -1,0 +1,48 @@
+.video-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  .video-content {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+
+    &.video-ready {
+      opacity: 1;
+    }
+  }
+
+  .video-poster-outer,
+  .video-poster {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translate3d(0, 0, 0);
+    overflow: hidden;
+  }
+
+  .video-poster-outer {
+    z-index: 2;
+
+    &.video-poster-blur {
+      .video-poster {
+        filter: blur(15px);
+        transform: scale(1) translate3d(0, 0, 0);
+        transform-origin: center;
+      }
+    }
+  }
+
+  .video-poster {
+    background-repeat: no-repeat;
+    opacity: 1;
+    background-size: cover;
+    background-position: center;
+  }
+}
