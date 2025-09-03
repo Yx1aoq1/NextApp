@@ -76,7 +76,7 @@ export class KonvaPlayer {
 
     this.image = new Konva.Image({
       image: this.video!,
-      draggable: true,
+      draggable: false,
       x: 0,
       y: 0,
     })
