@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 
-import MP4Player from '@/components/MP4Player'
 import CanvasPlayer from '@/components/CanvasPlayer'
 import JSmpegPlayer from '@/components/JSmpegPlayer'
+import MP4Player from '@/components/MP4Player'
 import OgvPlayer from '@/components/OgvPlayer'
 import VideoPlayer from '@/components/VideoPlayer'
 
@@ -45,11 +45,11 @@ export const VideoPage = () => {
       </div>
       <h1>mp4box.js+canvas</h1>
       <div className="w-200">
-        <MP4Player src="/test-video.mp4" autoPlay />
+        <MP4Player src="/portrait_origin_v1.mp4" autoPlay />
       </div>
       <h1>Konva+canvas</h1>
       <div className="w-200">
-        <CanvasPlayer src="/test-video.mp4" autoPlay />
+        <CanvasPlayer src="/portrait_origin_v1.mp4" autoPlay />
       </div>
       <h1>ogv/webm</h1>
       <OgvPlayer className="w-200" src="/test-video.webm" autoPlay />

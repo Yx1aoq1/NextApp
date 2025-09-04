@@ -51,17 +51,17 @@ export class KonvaPlayer {
     })
 
     this.video.addEventListener('play', () => {
-      options.onPlay && options.onPlay()
+      options.onPlay?.()
       this.anim?.start() // 视频播放时启动动画
     })
 
     this.video.addEventListener('pause', () => {
-      options.onPause && options.onPause()
+      options.onPause?.()
       this.anim?.stop() // 视频暂停时停止动画
     })
 
     this.video.addEventListener('ended', () => {
-      options.onEnded && options.onEnded()
+      options.onEnded?.()
       this.anim?.stop() // 视频结束时停止动画
     })
   }
@@ -97,7 +97,9 @@ export class KonvaPlayer {
   }
 
   stop() {
-    this.video?.pause()
-    this.video && (this.video.currentTime = 0)
+    if (this.video) {
+      this.video.pause()
+      this.video.currentTime = 0
+    }
   }
 }
