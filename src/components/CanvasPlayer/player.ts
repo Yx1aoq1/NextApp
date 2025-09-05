@@ -1,91 +1,88 @@
-import Konva from 'konva'
-
-interface KonvaPlayerOptions {
-  container: string
+interface CanvasPlayerOptions {
+  canvas: HTMLCanvasElement
   src: string
   autoplay?: boolean
   loop?: boolean
   onPlay?: () => void
   onPause?: () => void
   onEnded?: () => void
-  onProgress?: (currentTime: number, duration: number) => void
 }
 
-export class KonvaPlayer {
+export class CavPlayer {
+  private canvas: HTMLCanvasElement
+  private ctx: CanvasRenderingContext2D
   private video: HTMLVideoElement | null = null
   private src: string
-  private container: string
-  private containerElm: HTMLElement | null = null
-  private stage: Konva.Stage | null = null
-  private layer: Konva.Layer | null = null
-  private image: Konva.Image | null = null
-  private anim: Konva.Animation | null = null
+  private autoplay: boolean
+  private loop: boolean
 
-  constructor(options: KonvaPlayerOptions) {
+  private animationId: number | null = null
+
+  private onPlayCallback?: () => void
+  private onPauseCallback?: () => void
+  private onEndedCallback?: () => void
+
+  constructor(options: CanvasPlayerOptions) {
     this.src = options.src
-    this.container = options.container
-    this.containerElm = document.getElementById(this.container)
+    this.autoplay = options.autoplay ?? false
+    this.loop = options.loop ?? false
+    this.canvas = options.canvas
+    this.ctx = this.canvas.getContext('2d')!
 
-    this.loadVideo(options)
-    this.loadCanvas()
+    this.onPlayCallback = options.onPlay
+    this.onPauseCallback = options.onPause
+    this.onEndedCallback = options.onEnded
+
+    this.loadVideo()
   }
 
-  private loadVideo(options: KonvaPlayerOptions) {
+  private loadVideo() {
     this.video = document.createElement('video')
     this.video.muted = true
-    this.video.src = options.src
-    this.video.loop = options.loop ?? false
-    this.video.autoplay = options.autoplay ?? false
+    this.video.src = this.src
+    this.video.loop = this.loop ?? false
+    this.video.autoplay = this.autoplay ?? false
 
     this.video.addEventListener('loadeddata', () => {
-      const width = this.containerElm?.clientWidth ?? 0
-
-      const scale = width / (this.video?.videoWidth ?? width)
-
-      const height = (this.video?.videoHeight ?? 0) * scale
-
-      this.stage?.width(width)
-      this.stage?.height(height)
-      this.image?.width(width)
-      this.image?.height(height)
+      this.canvas.width = this.video?.videoWidth ?? 0
+      this.canvas.height = this.video?.videoHeight ?? 0
     })
 
     this.video.addEventListener('play', () => {
-      options.onPlay?.()
-      this.anim?.start() // 视频播放时启动动画
+      this.onPlayCallback?.()
+      this.startAnimation()
     })
 
     this.video.addEventListener('pause', () => {
-      options.onPause?.()
-      this.anim?.stop() // 视频暂停时停止动画
+      this.onPauseCallback?.()
+      this.stopAnimation()
     })
 
     this.video.addEventListener('ended', () => {
-      options.onEnded?.()
-      this.anim?.stop() // 视频结束时停止动画
+      this.onEndedCallback?.()
     })
   }
 
-  private loadCanvas() {
-    this.stage = new Konva.Stage({
-      container: this.container,
-    })
+  private computeFrame = () => {
+    if (!this.video || this.video.paused || this.video.ended) {
+      return
+    }
+    this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height)
+    this.animationId = requestAnimationFrame(this.computeFrame)
+  }
 
-    this.layer = new Konva.Layer()
-    this.stage.add(this.layer)
+  private startAnimation() {
+    if (this.animationId) {
+      return
+    }
+    this.animationId = requestAnimationFrame(this.computeFrame)
+  }
 
-    this.image = new Konva.Image({
-      image: this.video!,
-      draggable: false,
-      x: 0,
-      y: 0,
-    })
-
-    this.layer.add(this.image)
-
-    this.anim = new Konva.Animation(function () {
-      // do nothing, animation just needs to update the layer
-    }, this.layer)
+  private stopAnimation() {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId)
+      this.animationId = null
+    }
   }
 
   play() {

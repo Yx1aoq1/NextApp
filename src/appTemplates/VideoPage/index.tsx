@@ -45,11 +45,11 @@ export const VideoPage = () => {
       </div>
       <h1>mp4box.js+canvas</h1>
       <div className="w-200">
-        <MP4Player src="/portrait_origin_v1.mp4" autoPlay />
+        <MP4Player src="/Game_batch_batch.mp4" autoPlay />
       </div>
-      <h1>Konva+canvas</h1>
+      <h1>video+canvas</h1>
       <div className="w-200">
-        <CanvasPlayer src="/portrait_origin_v1.mp4" autoPlay />
+        <CanvasPlayer src="/Game_batch_batch.mp4" autoPlay />
       </div>
       <h1>ogv/webm</h1>
       <OgvPlayer className="w-200" src="/test-video.webm" autoPlay />

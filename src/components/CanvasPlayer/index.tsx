@@ -8,11 +8,11 @@ import Image from 'next/image'
 import useDocumentVisibilityChange from '@/hooks/useDocumentVisibilityChange'
 import { useInViewport } from '@/hooks/useInViewport'
 
+import { CavPlayer } from './player'
+
 import styles from './index.module.scss'
 
 import type { StaticImageData } from 'next/image'
-
-import { KonvaPlayer } from './player'
 
 export interface CanvasPlayerRef {
   /** 播放 */
@@ -56,8 +56,8 @@ const CanvasPlayer = forwardRef<CanvasPlayerRef, Props>((props, ref) => {
     replay = true,
     priority = false,
   } = props
-  const videoRef = useRef<HTMLDivElement>(null)
-  const playerRef = useRef<KonvaPlayer | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const playerRef = useRef<CavPlayer | null>(null)
 
   const poster =
     !props.poster || typeof props.poster === 'string'
@@ -67,7 +67,7 @@ const CanvasPlayer = forwardRef<CanvasPlayerRef, Props>((props, ref) => {
 
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPlayEnd, setIsPlayEnd] = useState(false)
-  const inViewport = useInViewport(videoRef as React.RefObject<HTMLElement>, {
+  const inViewport = useInViewport(canvasRef as React.RefObject<HTMLElement>, {
     root: null,
     rootMargin: '200px',
     threshold: 0,
@@ -88,14 +88,23 @@ const CanvasPlayer = forwardRef<CanvasPlayerRef, Props>((props, ref) => {
   }, [])
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      playerRef.current = new KonvaPlayer({
-        container: 'container',
-        src,
-        autoplay: autoPlay,
-        loop,
-      })
-    }
+    if (!canvasRef.current) return
+    playerRef.current = new CavPlayer({
+      canvas: canvasRef.current,
+      src,
+      autoplay: autoPlay,
+      loop,
+      onPlay: () => {
+        setIsPlaying(true)
+        setIsPlayEnd(false)
+      },
+      onPause: () => {
+        setIsPlaying(false)
+      },
+      onEnded: () => {
+        setIsPlayEnd(true)
+      },
+    })
   }, [src, autoPlay, loop])
 
   useDocumentVisibilityChange((isVisible: boolean) => {
@@ -107,13 +116,12 @@ const CanvasPlayer = forwardRef<CanvasPlayerRef, Props>((props, ref) => {
   useEffect(() => {
     if (!replay || !autoPlay) return
 
-    if (inViewport && !isPlaying) {
+    if (inViewport) {
       play()
-    }
-    if (!inViewport && isPlaying) {
+    } else {
       stop()
     }
-  }, [inViewport, isPlaying, replay, autoPlay, play, stop])
+  }, [inViewport, replay, autoPlay, play, stop])
 
   useImperativeHandle(ref, () => ({
     play,
@@ -122,7 +130,12 @@ const CanvasPlayer = forwardRef<CanvasPlayerRef, Props>((props, ref) => {
 
   return (
     <div className={cn([styles['video-container'], props.className])}>
-      <div ref={videoRef} id="container"></div>
+      <canvas
+        className={cn('video-content', styles['video-content'], {
+          [styles['video-ready']]: !isPosterVisible,
+        })}
+        ref={canvasRef}
+      />
       {isPosterVisible && (
         <div
           className={cn(styles['video-poster-outer'], {

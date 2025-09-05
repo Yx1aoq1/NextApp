@@ -116,13 +116,12 @@ const MP4Player = forwardRef<MP4PlayerRef, Props>((props, ref) => {
   useEffect(() => {
     if (!replay || !autoPlay) return
 
-    if (inViewport && !isPlaying) {
+    if (inViewport) {
       play()
-    }
-    if (!inViewport && isPlaying) {
+    } else {
       stop()
     }
-  }, [inViewport, isPlaying, replay, autoPlay, play, stop])
+  }, [inViewport, replay, autoPlay, play, stop])
 
   useImperativeHandle(ref, () => ({
     play,
