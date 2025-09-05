@@ -76,6 +76,7 @@ export class Mp4Player {
     }
 
     this.mp4box.onReady = info => {
+      console.log('🚀 ~ Mp4Player ~ initMp4Box ~ info:', info, this.videoFrames)
       // 获取视频轨道信息
       this.videoTrack = info.videoTracks[0]
       if (this.videoTrack) {
@@ -177,14 +178,20 @@ export class Mp4Player {
     // 查找当前应该显示的帧
     let targetFrame: Frame | null = null
     let targetIndex = startIndex
+    let minDiff = Infinity
 
     // 从当前帧开始向前查找
     for (let i = startIndex; i < this.videoFrames.length; i++) {
       const frame = this.videoFrames[i]
-      if (frame.timestamp <= timestamp) {
+      const diff = Math.abs(frame.timestamp - timestamp)
+      if (diff < minDiff) {
+        minDiff = diff
         targetFrame = frame
         targetIndex = i
-      } else {
+      }
+
+      // 如果找到了确切匹配或超过目标时间的帧，可以提前结束
+      if (frame.timestamp >= timestamp) {
         break
       }
     }
@@ -317,7 +324,7 @@ export class Mp4Player {
     if (targetFrame) {
       this.ctx.drawImage(targetFrame.img, 0, 0, this.canvas.width, this.canvas.height)
       this.currentFrameIndex = targetIndex
-    } else {
+    } else if (this.currentTime !== 0) {
       // 可能帧还未解析出来，所以延迟100ms再试一次
       this.seekTimer = setTimeout(() => {
         this.seek(time)

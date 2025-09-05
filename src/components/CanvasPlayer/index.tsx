@@ -115,7 +115,7 @@ const CanvasPlayer = forwardRef<CanvasPlayerRef, Props>((props, ref) => {
 
   useEffect(() => {
     if (!replay || !autoPlay) return
-
+    console.log(inViewport)
     if (inViewport) {
       play()
     } else {

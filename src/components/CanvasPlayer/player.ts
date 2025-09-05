@@ -94,9 +94,9 @@ export class CavPlayer {
   }
 
   stop() {
-    if (this.video) {
-      this.video.pause()
+    if (this.video && this.video.paused === false) {
       this.video.currentTime = 0
+      this.video.pause()
     }
   }
 }

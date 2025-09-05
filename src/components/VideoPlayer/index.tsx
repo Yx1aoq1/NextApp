@@ -174,7 +174,6 @@ const VideoPlayer = forwardRef<VideoPlayerRef, Props>((props, ref) => {
 
   useEffect(() => {
     if (!replay || !autoPlay) return
-
     if (inViewport) {
       play()
     } else {
