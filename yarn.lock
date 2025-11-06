@@ -729,6 +729,11 @@
   dependencies:
     undici-types "~6.21.0"
 
+"@types/qs@^6.14.0":
+  version "6.14.0"
+  resolved "http://npm.meitu-int.com/@types%2fqs/-/qs-6.14.0.tgz#d8b60cecf62f2db0fb68e5e006077b9178b85de5"
+  integrity sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==
+
 "@types/react-dom@^19":
   version "19.1.6"
   resolved "https://registry.npmmirror.com/@types/react-dom/-/react-dom-19.1.6.tgz"
