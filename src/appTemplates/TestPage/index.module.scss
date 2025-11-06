@@ -1,0 +1,74 @@
+.button {
+  width: 199px;
+  height: 44px;
+  font-size: 12px;
+  line-height: 44px;
+  padding: 0 9px;
+  color: #e0e0e0;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background-color: #2c2c2e;
+  cursor: pointer;
+}
+
+.button1 {
+  @extend .button;
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  background-image:
+    linear-gradient(
+      to right,
+      var(--background-button-secondary, #2c2c2e),
+      var(--background-button-secondary, #2c2c2e)
+    ),
+    linear-gradient(90deg, #9dcff5 0%, #c2a3ff 50.52%, #ffade4 100%);
+}
+
+.button2 {
+  @extend .button;
+  position: relative;
+  /* 使用 SVG 作为边框 */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    pointer-events: none;
+    /* SVG 渐变边框 - 使用 data URI */
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 44" preserveAspectRatio="none"><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:%239dcff5;stop-opacity:1" /><stop offset="50.52%" style="stop-color:%23c2a3ff;stop-opacity:1" /><stop offset="100%" style="stop-color:%23ffade4;stop-opacity:1" /></linearGradient></defs><rect x="0.5" y="0.5" width="199" height="43" rx="6" ry="6" fill="none" stroke="url(%23grad)" stroke-width="1"/></svg>')
+      center / 100% 100% no-repeat;
+  }
+}
+
+.button3 {
+  @extend .button;
+  position: relative;
+  /* 创建新的层叠上下文，确保伪元素在文字下方 */
+  isolation: isolate;
+
+  /* 底层：渐变背景 - 外扩1px形成边框 */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #9dcff5 0%, #c2a3ff 50.52%, #ffade4 100%);
+    z-index: -2;
+  }
+
+  /* 中间层：纯色背景 - 遮盖中间区域，只露出1px边框 */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 5px; /* 略小于外层，形成精确1px边框 */
+    background: #2c2c2e;
+    z-index: -1;
+  }
+}
