@@ -72,3 +72,60 @@
     z-index: -1;
   }
 }
+
+.menuBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.menuBtnLine {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: rgba(252, 250, 255, 0.9);
+  border-radius: 1px;
+  transition: background 0.25s ease;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(252, 250, 255, 0.9);
+    border-radius: 1px;
+    transform-origin: center;
+    transition:
+      transform 0.25s ease,
+      opacity 0.2s ease;
+  }
+
+  &::before {
+    transform: translateY(-6px);
+  }
+  &::after {
+    transform: translateY(6px);
+  }
+}
+
+.menuBtnActive {
+  .menuBtnLine {
+    background: transparent;
+    &::before {
+      transform: translateY(0) rotate(45deg);
+    }
+    &::after {
+      transform: translateY(0) rotate(-45deg);
+    }
+  }
+}
